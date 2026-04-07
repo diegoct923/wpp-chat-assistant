@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo
+
 import schedule
 import time
 from datetime import datetime
@@ -7,8 +9,9 @@ from meta_service import enviar_whatsapp
 enviados = set()
 
 def revisar_recordatorios():
-    ahora = datetime.now().strftime("%Y-%m-%d %H:%M")
-    hora_actual = datetime.now().strftime("%H:%M")
+    ahora_dt = datetime.now(ZoneInfo("America/Montevideo"))
+    ahora = ahora_dt.strftime("%Y-%m-%d %H:%M")
+    hora_actual = ahora_dt.strftime("%H:%M")
 
     print("Revisando recordatorios a las:", ahora)
 
