@@ -183,3 +183,18 @@ def obtener_recordatorio_por_id(recordatorio_id):
     row = cursor.fetchone()
     conn.close()
     return row
+
+def obtener_recordatorios_usuario(usuario):
+    conn = crear_conexion()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT id, tarea, fecha, hora, frecuencia
+    FROM recordatorios
+    WHERE usuario = ?
+    ORDER BY hora ASC
+    """, (usuario,))
+
+    rows = cursor.fetchall()
+    conn.close()
+    return rows

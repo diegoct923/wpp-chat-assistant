@@ -44,6 +44,21 @@ def armar_respuesta_recordatorio(resultado):
 class MensajeEntrada(BaseModel):
     texto: str
 
+def armar_lista_recordatorios(recordatorios):
+    if not recordatorios:
+        return "No tenés recordatorios guardados."
+
+    lineas = ["📋 Tus recordatorios:"]
+    for r in recordatorios:
+        _, tarea, fecha, hora, frecuencia = r
+        fecha_txt = fecha if fecha else "hoy"
+        hora_txt = hora if hora else "sin hora"
+        frecuencia_txt = frecuencia if frecuencia else "solo una vez"
+
+        lineas.append(f"• {hora_txt} | {tarea} | {fecha_txt} | {frecuencia_txt}")
+
+    return "\n".join(lineas)
+
 @app.get("/")
 def inicio():
     return {"mensaje": "Servidor funcionando 🚀"}
@@ -102,6 +117,14 @@ async def whatsapp_webhook(request: Request):
         guardar_mensaje(numero, "user", mensaje)
 
         texto = mensaje.strip().lower().replace(".", "").replace(",", "")
+
+        if texto in ["mis recordatorios", "ver recordatorios", "mostrar recordatorios"]:
+            recordatorios = obtener_recordatorios_usuario(numero)
+            respuesta = armar_lista_recordatorios(recordatorios)
+
+            guardar_mensaje(numero, "assistant", respuesta)
+            enviar_whatsapp(respuesta, numero)
+            return PlainTextResponse("ok")
 
         print("DEBUG TEXTO:", texto)
 
