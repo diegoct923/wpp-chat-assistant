@@ -7,6 +7,7 @@ import threading
 from scheduler import iniciar_scheduler
 from meta_service import enviar_whatsapp
 from datetime import datetime, timedelta
+import pytz
 
 VERIFY_TOKEN = "mi_token_meta_123"
 
@@ -124,7 +125,8 @@ async def whatsapp_webhook(request: Request):
                     if recordatorio:
                         _, tarea, fecha, hora, frecuencia = recordatorio
 
-                        ahora = datetime.now()
+                        uruguay = pytz.timezone("America/Montevideo")
+                        ahora = datetime.now(uruguay)
                         nueva_hora = (ahora + timedelta(hours=1)).strftime("%H:%M")
 
                         guardar_recordatorio_manual(
